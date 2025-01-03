@@ -10,7 +10,6 @@ jobs:
   apply:
     runs-on: ubuntu-22.04
     env:
-      TF_VAR_backend_bucket: ${{ secrets.BACKEND_BUCKET }}
       TF_VAR_my_ips: ${{ secrets.MY_IPS }}
     steps:
       - uses: actions/checkout@v4.2.2
@@ -20,6 +19,6 @@ jobs:
           role-session-name: samplerolesession
           role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
       - uses: hashicorp/setup-terraform@v3.1.2
-      - run: terraform init
+      - run: terraform init -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}"
       - run: terraform plan
       - run: terraform apply -auto-approve
