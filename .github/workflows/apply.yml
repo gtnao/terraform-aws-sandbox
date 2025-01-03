@@ -1,0 +1,24 @@
+name: apply
+on:
+  push:
+    branches:
+      - main
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  apply:
+    runs-on: ubuntu-22.04
+    env:
+      TF_VAR_backend_bucket: ${{ secrets.BACKEND_BUCKET }}
+      TF_VAR_my_ips: ${{ secrets.MY_IPS }}
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: ap-northeast-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      - uses: hashicorp/setup-terraform@v3.1.2
+      - run: terraform init
+      - run: terraform plan
+      - run: terraform apply -auto-approve
